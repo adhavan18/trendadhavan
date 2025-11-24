@@ -1,0 +1,44 @@
+name: X Auto Engager Bot
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # runs every 30 minutes
+  workflow_dispatch:          # allow manual run
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install tweepy requests
+
+      - name: Run bot
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_KEY_SECRET: ${{ secrets.TWITTER_API_KEY_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          YOUR_USERNAME: ${{ secrets.YOUR_USERNAME }}
+          YOUR_USER_ID: ${{ secrets.YOUR_USER_ID }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          NICHE_KEYWORDS: ${{ secrets.NICHE_KEYWORDS }}
+          MAX_REPLIES_PER_DAY: ${{ secrets.MAX_REPLIES_PER_DAY }}
+        run: python main.py
+
+      - name: Commit bot state
+        if: always()
+        run: |
+          git config --global user.name "github-action"
+          git config --global user.email "action@github.com"
+          git add state.json || true
+          git commit -m "Update state" || true
+          git push
