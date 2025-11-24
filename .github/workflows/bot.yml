@@ -33,12 +33,3 @@ jobs:
           NICHE_KEYWORDS: ${{ secrets.NICHE_KEYWORDS }}
           MAX_REPLIES_PER_DAY: ${{ secrets.MAX_REPLIES_PER_DAY }}
         run: python main.py
-
-      - name: Commit bot state
-        if: always()
-        run: |
-          git config --global user.name "github-action"
-          git config --global user.email "action@github.com"
-          git add state.json || true
-          git commit -m "Update state" || true
-          git push
