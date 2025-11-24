@@ -1,4 +1,4 @@
-name: X Auto Engager Bot
+name: twitterautoengager
 
 on:
   schedule:
